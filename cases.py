@@ -23,7 +23,8 @@ regions = [('Florida', 'Miami-Dade'),
            ('Michigan', 'Midland'),
            ('California', 'Placer'),
            ('Ohio', 'Montgomery'),
-           ('Connecticut', 'Litchfield')]
+           ('Connecticut', 'Litchfield'),
+           ('Rhode Island', 'Providence')]
 
 for s,c in regions:
     
@@ -55,7 +56,7 @@ for s,c in regions:
         # ax1.spines['right'].set_visible(False)
         ax1.grid(b=True, which='major', axis='y', color='lightgrey')
 
-        ax2.plot(county.newCases, '-o', color='black')
+        ax2.plot(county['newCases'], '-o', color='black')
         ax2.plot(county['rolling14day'], linewidth=3, color='lightgrey')
         ax2.set_xlabel('Date', fontsize=12)
         ax2.tick_params(axis='x', labelsize=12)
@@ -76,7 +77,7 @@ for s,c in regions:
         
         fig, ax = plt.subplots(1, 1, figsize=(6.4, 4.8))
 
-        ax.plot(state.newCases, '-o', color='black', label='Daily count')
+        ax.plot(state['newCases'], '-o', color='black', label='Daily count')
         ax.plot(state['rolling14day'], linewidth=3, color='lightgrey',
                 label='14-day moving average')
         ax.set_title('Daily New Confirmed Cases\n'\
