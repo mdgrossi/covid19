@@ -24,7 +24,9 @@ regions = [('Florida', 'Miami-Dade'),
            ('California', 'Placer'),
            ('Ohio', 'Montgomery'),
            ('Connecticut', 'Litchfield'),
-           ('Rhode Island', 'Providence')]
+           ('Rhode Island', None),
+           ('Arkansas', 'Pulaski'),
+           ('New York', 'Monroe')]
            
 fontsize=10
 
@@ -47,7 +49,7 @@ for s,c in regions:
     
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(5.4, 7.0), sharex=True)
 
-        ax1.plot(state.newCases, '-o', color='black')
+        ax1.plot(state.newCases, '-o', color='black', markersize=2.5)
         ax1.plot(state['rolling14day'], linewidth=3, color='lightgrey')
         ax1.set_title('Daily New Confirmed Cases\n'\
                       'Data from https://github.com/nytimes/covid-19-data',
@@ -58,7 +60,7 @@ for s,c in regions:
         # ax1.spines['right'].set_visible(False)
         ax1.grid(b=True, which='major', axis='y', color='lightgrey')
 
-        ax2.plot(county['newCases'], '-o', color='black')
+        ax2.plot(county['newCases'], '-o', color='black', markersize=2.5)
         ax2.plot(county['rolling14day'], linewidth=3, color='lightgrey')
         ax2.set_xlabel('Date', fontsize=fontsize)
         ax2.tick_params(axis='x', labelsize=12, labelrotation=45)
@@ -79,7 +81,8 @@ for s,c in regions:
         
         fig, ax = plt.subplots(1, 1, figsize=(5.4, 3.8))
 
-        ax.plot(state['newCases'], '-o', color='black', label='Daily count')
+        ax.plot(state['newCases'], '-o', color='black', markersize=3,
+                label='Daily count')
         ax.plot(state['rolling14day'], linewidth=3, color='lightgrey',
                 label='14-day moving average')
         ax.set_title('Daily New Confirmed Cases\n'\
