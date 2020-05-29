@@ -7,6 +7,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.ticker as mtick
+from scipy.interpolate import make_interp_spline, BSpline
 from us_state_abbrev import us_state_abbrev as abbr
 
 # Load data
@@ -117,23 +119,38 @@ for s,c in regions:
                 .format(abbr[s]), dpi=175)
 
     # =================================================================== #
-    # Daily positive counts normalized by daily test counts
-    normalized = state.newCases/historic.totalTestResultsIncrease
-    normalized.replace([np.inf, -np.inf], np.nan, inplace=True)
-    firstDate = normalized.dropna().index[0] + pd.Timedelta(days=14)
+    # Percent of positive cases
+    
+    # Calculate percentages
+    # Sort, interpolate NAs produced from divide by zero
+    dailyPercent = historic.positiveIncrease/historic.totalTestResultsIncrease
+    dailyPercent = dailyPercent[::-1].interpolate().dropna() * 100
+    newTimes = pd.date_range(dailyPercent.index[0], dailyPercent.index[-1],
+                             freq='1H')
+    spl = make_interp_spline(dailyPercent.index, dailyPercent, k=3)
+    dailyPercentSmooth = pd.Series(spl(newTimes), index=newTimes)
+    
+    totalPercent = historic.positive/historic.totalTestResults
+    totalPercent = totalPercent[::-1].interpolate().dropna() * 100
+    spl = make_interp_spline(totalPercent.index, totalPercent, k=3)
+    totalPercentSmooth = pd.Series(spl(newTimes), index=newTimes)
+    firstDate = totalPercentSmooth.index[0] + pd.Timedelta(days=14)
     
     fig, ax = plt.subplots(1, 1, figsize=(5.4,  3.8))
-    ax.plot(normalized.loc[firstDate:], '-o', color='black', 
-            markersize=markersize, label='Normalized positive counts')
-    ax.plot(normalized.rolling(14).mean(), linewidth=3, color='lightgrey',
-            label='14-day moving average')
-    ax.set_title('Daily New Confirmed Cases\nNormalized by Total Daily Tests\n'\
-                  'Data from https://covidtracking.com',
+    ax.plot(dailyPercentSmooth.loc[firstDate:], linewidth=1, color='lightgrey',
+            label='Positive cases')
+    # ax.plot(totalPercentSmooth, linewidth=2, color='darkblue',
+    #         label='Rolling total')
+    ax.plot(dailyPercentSmooth.rolling(14*24).mean(), linewidth=2,
+            color='darkred', label='14-day moving average')
+    ax.set_title('Daily Percentage of Positive Tests: {}\n'\
+                 'Data from https://covidtracking.com'.format(s),
                   fontsize=fontsize+2)
     ax.tick_params(axis='x', labelsize=12, labelrotation=45)
     ax.tick_params(axis='y', labelsize=12)
     ax.xaxis.set_major_locator(mdates.DayLocator(interval=10))
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
+    ax.yaxis.set_major_formatter(mtick.PercentFormatter())
     ax.set_xlabel('Date', fontsize=fontsize)
     ax.set_ylabel(s, fontsize=fontsize)
     ax.legend(loc='upper right')
