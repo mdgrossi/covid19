@@ -124,21 +124,21 @@ for s,c in regions:
     # Calculate percentages
     # Sort, interpolate NAs produced from divide by zero
     dailyPercent = historic.positiveIncrease/historic.totalTestResultsIncrease
-    dailyPercent = dailyPercent[::-1].interpolate().dropna() * 100
+    dailyPercent = dailyPercent[::-1].dropna()
     newTimes = pd.date_range(dailyPercent.index[0], dailyPercent.index[-1],
                              freq='1H')
     spl = make_interp_spline(dailyPercent.index, dailyPercent, k=3)
     dailyPercentSmooth = pd.Series(spl(newTimes), index=newTimes)
     
     totalPercent = historic.positive/historic.totalTestResults
-    totalPercent = totalPercent[::-1].interpolate().dropna() * 100
+    totalPercent = totalPercent[::-1].dropna()
     spl = make_interp_spline(totalPercent.index, totalPercent, k=3)
     totalPercentSmooth = pd.Series(spl(newTimes), index=newTimes)
     firstDate = totalPercentSmooth.index[0] + pd.Timedelta(days=14)
     
     fig, ax = plt.subplots(1, 1, figsize=(5.4,  3.8))
     ax.plot(dailyPercentSmooth.loc[firstDate:], linewidth=1, color='lightgrey',
-            label='Positive cases')
+            label='Daily positive cases')
     # ax.plot(totalPercentSmooth, linewidth=2, color='darkblue',
     #         label='Rolling total')
     ax.plot(dailyPercentSmooth.rolling(14*24).mean(), linewidth=2,
@@ -150,7 +150,7 @@ for s,c in regions:
     ax.tick_params(axis='y', labelsize=12)
     ax.xaxis.set_major_locator(mdates.DayLocator(interval=10))
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
-    ax.yaxis.set_major_formatter(mtick.PercentFormatter())
+    ax.yaxis.set_major_formatter(mtick.PercentFormatter(1, decimals=0))
     ax.set_xlabel('Date', fontsize=fontsize)
     ax.set_ylabel(s, fontsize=fontsize)
     ax.legend(loc='upper right')
