@@ -32,7 +32,8 @@ regions = [('Florida', 'Miami-Dade'),
            ('Connecticut', 'Litchfield'),
            ('Rhode Island', None),
            ('Arkansas', 'Pulaski'),
-           ('New York', 'Monroe')]
+           ('New York', 'Monroe'),
+           ('North Carolina', 'Guilford')]
            
 fontsize = 10
 markersize = 2.5
@@ -133,6 +134,7 @@ for s,c in regions:
     plt.tight_layout()        
     plt.savefig('/Users/mgrossi/Desktop/covid19/plots/covid19-{}.png'\
                 .format(abbr[s]), dpi=175)
+    plt.close('all')
 
     # =================================================================== #
     # Percent of positive cases
@@ -179,4 +181,5 @@ for s,c in regions:
     plt.tight_layout()
     plt.savefig('/Users/mgrossi/Desktop/covid19/plots/normalized-{}.png'\
                 .format(abbr[s]), dpi=175)
+    plt.close('all')
     
