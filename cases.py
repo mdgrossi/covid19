@@ -175,6 +175,7 @@ for s,c in regions:
     ax.yaxis.set_major_formatter(mtick.PercentFormatter(1, decimals=0))
     ax.set_xlabel('Date', fontsize=fontsize)
     ax.set_ylabel(s, fontsize=fontsize)
+    ax.set_ylim(0, None)
     leg = ax.legend(loc='upper right')
     plt.draw()
     add_r0()
