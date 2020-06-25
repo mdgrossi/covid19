@@ -53,6 +53,7 @@ def add_r0(fontsize=11):
                 xycoords='axes points', fontsize=fontsize-1,
                 color=color())
 
+# Regional plots
 for s,c in regions:
     
     # State data
@@ -184,3 +185,26 @@ for s,c in regions:
                 .format(abbr[s]), dpi=175)
     plt.close('all')
     
+    if s == 'Florida':
+        fig, ax = plt.subplots(1, 1, figsize=(6.4, 3.8))
+        ax.plot(dailyPercentSmooth, label='Daily positive cases', color='grey', 
+                linewidth=1)
+        ax.plot(dailyPercentSmooth.rolling(14*24).mean(), color='darkred',
+                linewidth=2, label='14-day moving avg.')
+        ax.set_title('Daily Percentage of Positive Tests: {}\n'\
+                     'Data from https://covidtracking.com & '\
+                     'https://rt.live'.format(s), fontsize=fontsize)
+        leg = ax.legend(loc='upper right')
+        plt.draw()
+        # add_r0()
+        ax.xaxis.set_major_locator(mdates.DayLocator(interval=10))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+        ax.yaxis.set_major_formatter(mtick.PercentFormatter(1, decimals=0))
+        ax.set_xlabel('Date', fontsize=fontsize)
+        ax.set_ylabel('Percent', fontsize=fontsize)
+        ax.set_ylim(0, 0.35)
+        plt.tight_layout()
+        plt.savefig('/Users/mgrossi/Desktop/covid19/plots/FL_full_tseries.png',
+                    dpi=175)
+        
+# =========================================================================== #
