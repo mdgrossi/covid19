@@ -191,6 +191,8 @@ for s,c in regions:
                 linewidth=1)
         ax.plot(dailyPercentSmooth.rolling(14*24).mean(), color='darkred',
                 linewidth=2, label='14-day moving avg.')
+        ax.plot(dailyPercentSmooth.rolling(7*24).mean(), color='darkblue',
+                linewidth=2, label='7-day moving avg.')
         ax.set_title('Daily Percentage of Positive Tests: {}\n'\
                      'Data from https://covidtracking.com & '\
                      'https://rt.live'.format(s), fontsize=fontsize)
