@@ -45,14 +45,14 @@ def add_r0(fontsize=11):
         return 'darkgreen' if re < 1 else 'darkred'
     # Legend location
     re = np.round(Re['mean'].iloc[-1], 2)
-    ax.annotate('Effective reproduction', (180, 113), (180, 113),
+    ax.annotate('Effective reproduction', (100, 155), (100, 155), # was 180
                 xycoords='axes points', fontsize=fontsize-2)
-    ax.annotate(r'number: $r_e$ =', (180, 100), (180, 100),
+    ax.annotate(r'number: $r_e$ =', (100, 143), (100, 143),
                 xycoords='axes points', fontsize=fontsize-2)
-    ax.annotate(re, (243, 100), (243, 100),
-                xycoords='axes points', fontsize=fontsize-1,
+    ax.annotate(re, (160, 143), (160, 143),
+                xycoords='axes points', fontsize=fontsize-2,
                 color=color())
-
+ 
 # Regional plots
 for s,c in regions:
     
@@ -128,9 +128,9 @@ for s,c in regions:
                                    color='black', marker='o'),
                          plt.Line2D([0],[0], lw=3, color='lightgrey')]
         ax.legend(custom_lines, ['Daily count', '14-day moving average'],
-                   ncol=2, fontsize=fontsize, edgecolor='lightgrey', 
-                   fancybox=True, shadow=True, loc='upper center',
-                   bbox_to_anchor=(0.5, -0.35))
+                  ncol=2, fontsize=fontsize, edgecolor='lightgrey', 
+                  fancybox=True, shadow=True, loc='upper center',
+                  bbox_to_anchor=(0.5, -0.35))
 
     plt.tight_layout()        
     plt.savefig('/Users/mgrossi/Desktop/covid19/plots/covid19-{}.png'\
@@ -159,13 +159,15 @@ for s,c in regions:
     # Effective reproduction rate
     Re = Rnought.loc[abbr[s]]
     
-    fig, ax = plt.subplots(1, 1, figsize=(5.4,  3.8))
+    fig, ax = plt.subplots(1, 1, figsize=(5.4,  4.8))
     ax.plot(dailyPercentSmooth.loc[firstDate:], linewidth=1, color='lightgrey',
             label='Daily positive cases')
     # ax.plot(totalPercentSmooth, linewidth=2, color='darkblue',
     #         label='Rolling total')
     ax.plot(dailyPercentSmooth.rolling(14*24).mean().loc[firstDate:], 
-            linewidth=2, color='darkred', label='14-day moving average')
+            linewidth=2, color='darkred', label='14-day moving avg.')
+    ax.plot(dailyPercentSmooth.rolling(7*24).mean().loc[firstDate:], 
+            linewidth=2, color='darkblue', label='7-day avg.')
     ax.set_title('Daily Percentage of Positive Tests: {}\n'\
                  'Data from https://covidtracking.com & '\
                  'https://rt.live'.format(s), fontsize=fontsize)
@@ -176,19 +178,19 @@ for s,c in regions:
     ax.yaxis.set_major_formatter(mtick.PercentFormatter(1, decimals=0))
     ax.set_xlabel('Date', fontsize=fontsize)
     ax.set_ylabel(s, fontsize=fontsize)
-    ax.set_ylim(0, None)
-    leg = ax.legend(loc='upper right')
-    plt.draw()
+    ax.set_ylim(0, min(ax.get_ylim()[1],0.5))
+    leg = ax.legend(loc='lower left', bbox_to_anchor=(0, -0.5), ncol=3, 
+                    fontsize=fontsize-2, fancybox=True, shadow=True)
     add_r0()
     plt.tight_layout()
-    plt.savefig('/Users/mgrossi/Desktop/covid19/plots/normalized-{}.png'\
-                .format(abbr[s]), dpi=175)
+    fig.savefig('/Users/mgrossi/Desktop/covid19/plots/normalized-{}.png'\
+                .format(abbr[s]), dpi=175, bbox_inches='tight')
     plt.close('all')
     
     if s == 'Florida':
-        fig, ax = plt.subplots(1, 1, figsize=(6.4, 3.8))
-        ax.plot(dailyPercentSmooth, label='Daily positive cases', color='grey', 
-                linewidth=1)
+        fig, ax = plt.subplots(1, 1, figsize=(6.4, 4.8))
+        ax.plot(dailyPercentSmooth, label='Daily positive cases', 
+                color='lightgrey', linewidth=1,)
         ax.plot(dailyPercentSmooth.rolling(14*24).mean(), color='darkred',
                 linewidth=2, label='14-day moving avg.')
         ax.plot(dailyPercentSmooth.rolling(7*24).mean(), color='darkblue',
@@ -196,17 +198,18 @@ for s,c in regions:
         ax.set_title('Daily Percentage of Positive Tests: {}\n'\
                      'Data from https://covidtracking.com & '\
                      'https://rt.live'.format(s), fontsize=fontsize)
-        leg = ax.legend(loc='upper right')
-        plt.draw()
-        # add_r0()
+        leg = ax.legend(loc='lower left', bbox_to_anchor=(0.05, -0.4), ncol=3, 
+                        fontsize=fontsize-2, fancybox=True, shadow=True)
+        add_r0()
         ax.xaxis.set_major_locator(mdates.DayLocator(interval=10))
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
         ax.yaxis.set_major_formatter(mtick.PercentFormatter(1, decimals=0))
+        ax.tick_params(axis='x', labelsize=fontsize, labelrotation=45)
         ax.set_xlabel('Date', fontsize=fontsize)
         ax.set_ylabel('Percent', fontsize=fontsize)
         ax.set_ylim(0, 0.35)
         plt.tight_layout()
         plt.savefig('/Users/mgrossi/Desktop/covid19/plots/FL_full_tseries.png',
-                    dpi=175)
+                    dpi=175, bbox_inches='tight')
         
 # =========================================================================== #
