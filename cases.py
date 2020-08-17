@@ -77,11 +77,12 @@ for s,c in regions:
     
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(5.4, 7.0), sharex=True)
 
-        ax1.plot(state.newCases, '-o', color='black', markersize=markersize)
+        ax1.plot(state['newCases'], '-o', color='black', markersize=markersize)
         ax1.plot(state['rolling14day'], linewidth=3, color='lightgrey')
-        ax1.set_title('Daily New Confirmed Cases\n'\
-                      'Data from https://github.com/nytimes/covid-19-data',
-                      fontsize=fontsize+2)
+        thruDate = state['newCases'].index[-1].strftime('%B %d')
+        ax1.set_title('Daily New Confirmed Cases through {}\n'\
+                      'Data from https://github.com/nytimes/covid-19-data'\
+                      .format(thruDate), fontsize=fontsize+2)
         ax1.tick_params(axis='y', labelsize=12)
         ax1.set_ylabel(s, fontsize=fontsize)
         ax1.grid(b=True, which='major', axis='y', color='lightgrey')
@@ -114,9 +115,10 @@ for s,c in regions:
                 label='Daily positive count')
         ax.plot(state['rolling14day'], linewidth=3, color='lightgrey',
                 label='14-day moving average')
-        ax.set_title('Daily New Confirmed Cases\n'\
-                     'Data from https://github.com/nytimes/covid-19-data',
-                      fontsize=fontsize)
+        thruDate = state['newCases'].index[-1].strftime('%B %d')
+        ax.set_title('Daily New Confirmed Cases through {}\n'\
+                      'Data from https://github.com/nytimes/covid-19-data'\
+                      .format(thruDate), fontsize=fontsize+2)
         ax.tick_params(axis='x', labelsize=12, labelrotation=45)
         ax.tick_params(axis='y', labelsize=12)
         ax.set_xlabel('Date', fontsize=fontsize)
@@ -168,9 +170,10 @@ for s,c in regions:
             linewidth=2, color='darkred', label='14-day moving avg.')
     ax.plot(dailyPercentSmooth.rolling(7*24).mean().loc[firstDate:], 
             linewidth=2, color='darkblue', label='7-day avg.')
-    ax.set_title('Daily Percentage of Positive Tests: {}\n'\
+    thruDate = dailyPercentSmooth.index[-1].strftime('%B %d')        
+    ax.set_title('{} Daily Percentage of Positive Tests through {}\n'\
                  'Data from https://covidtracking.com & '\
-                 'https://rt.live'.format(s), fontsize=fontsize)
+                 'https://rt.live'.format(s, thruDate), fontsize=fontsize)
     ax.tick_params(axis='x', labelsize=12, labelrotation=45)
     ax.tick_params(axis='y', labelsize=12)
     ax.xaxis.set_major_locator(mdates.DayLocator(interval=10))
@@ -182,6 +185,7 @@ for s,c in regions:
     leg = ax.legend(loc='lower left', bbox_to_anchor=(0, -0.5), ncol=3, 
                     fontsize=fontsize-2, fancybox=True, shadow=True)
     add_r0()
+    ax.grid(axis='y', alpha=0.25)
     plt.tight_layout()
     fig.savefig('/Users/mgrossi/Desktop/covid19/plots/normalized-{}.png'\
                 .format(abbr[s]), dpi=175, bbox_inches='tight')
@@ -195,9 +199,10 @@ for s,c in regions:
                 linewidth=2, label='14-day moving avg.')
         ax.plot(dailyPercentSmooth.rolling(7*24).mean(), color='darkblue',
                 linewidth=2, label='7-day moving avg.')
-        ax.set_title('Daily Percentage of Positive Tests: {}\n'\
+        thruDate = dailyPercentSmooth.index[-1].strftime('%B %d')
+        ax.set_title('{} Daily Percentage of Positive Tests through {}\n'\
                      'Data from https://covidtracking.com & '\
-                     'https://rt.live'.format(s), fontsize=fontsize)
+                     'https://rt.live'.format(s, thruDate), fontsize=fontsize)
         leg = ax.legend(loc='lower left', bbox_to_anchor=(0.05, -0.4), ncol=3, 
                         fontsize=fontsize-2, fancybox=True, shadow=True)
         add_r0()
@@ -208,6 +213,7 @@ for s,c in regions:
         ax.set_xlabel('Date', fontsize=fontsize)
         ax.set_ylabel('Percent', fontsize=fontsize)
         ax.set_ylim(0, 0.35)
+        ax.grid(axis='y', alpha=0.25)
         plt.tight_layout()
         plt.savefig('/Users/mgrossi/Desktop/covid19/plots/FL_full_tseries.png',
                     dpi=175, bbox_inches='tight')
