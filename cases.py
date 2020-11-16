@@ -31,9 +31,9 @@ regions = [('Florida', 'Miami-Dade'),
            ('Ohio', 'Montgomery'),
            ('Connecticut', 'Litchfield'),
            ('Rhode Island', None),
-           ('Arkansas', 'Pulaski'),
            ('New York', 'Monroe'),
-           ('North Carolina', 'Guilford')]
+           ('North Carolina', 'Guilford'),
+           ('Arkansas', 'Pulaski')]
            
 fontsize = 10
 markersize = 2.5
@@ -146,6 +146,8 @@ for s,c in regions:
     # Sort, interpolate NAs produced from divide by zero
     dailyPercent = historic.positiveIncrease/historic.totalTestResultsIncrease
     dailyPercent = dailyPercent[::-1].dropna()
+    # Replace inf, -inf with 0 (Needed for Arkansas)
+    dailyPercent.replace({-np.inf: 0, np.inf: 0}, inplace=True)
     newTimes = pd.date_range(dailyPercent.index[0], dailyPercent.index[-1],
                              freq='1H')
     spl = make_interp_spline(dailyPercent.index, dailyPercent, k=3)
